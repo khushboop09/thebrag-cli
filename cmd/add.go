@@ -1,15 +1,10 @@
 package cmd
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
-	"log"
-	"net/http"
+	"os"
 
-	"thebrag/requests"
-	"thebrag/responses"
+	"thebrag/helpers"
 
 	"github.com/spf13/cobra"
 )
@@ -20,33 +15,24 @@ var addCmd = &cobra.Command{
 	Short: "add a new brag",
 	Long:  `this command will add a new brag to your work log.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if os.Getenv("USER_ID") == "" {
+			fmt.Println("Please login to add brags")
+			return
+		}
 		bragTitle, _ := cmd.Flags().GetString("title")
 		bragDetails, _ := cmd.Flags().GetString("details")
-		brag := requests.AddBragRequest{
-			Title:   bragTitle,
-			Details: bragDetails,
-		}
-		json_data, err := json.Marshal(brag)
-		if err != nil {
-			log.Fatal(err)
-		}
-		response, err := http.Post("http://localhost:8080/brag", "application/json", bytes.NewBuffer(json_data))
-		if err != nil {
-			fmt.Println(err)
-		}
+		categoryName, _ := cmd.Flags().GetString("category")
 
-		defer response.Body.Close()
-		responseBody, err := io.ReadAll(response.Body)
-		if err != nil {
-			fmt.Println(err)
+		categoryId := helpers.GetCategoryId(categoryName)
+		if categoryId == 0 {
+			fmt.Println("Invalid category, please check if this category exists or it is correctly spelled")
+			return
 		}
-
-		var res responses.PostBragResponse
-		json.Unmarshal(responseBody, &res)
-		if response.StatusCode == 201 {
-			fmt.Println(res.Message)
+		response, statusCode := helpers.AddABrag(bragTitle, bragDetails, categoryId)
+		if statusCode == 201 {
+			fmt.Println(response.Message)
 		} else {
-			fmt.Println(res.Data)
+			fmt.Println(response.Data)
 		}
 	},
 }
@@ -57,4 +43,5 @@ func init() {
 	// local flags
 	addCmd.Flags().StringP("title", "t", "", "specify title of your brag")
 	addCmd.Flags().StringP("details", "d", "", "specify details of your brag")
+	addCmd.Flags().StringP("category", "c", "", "specify the category of your brag")
 }

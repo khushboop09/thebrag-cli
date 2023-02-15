@@ -5,7 +5,9 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"thebrag/helpers"
+	"thebrag/responses"
 
 	"github.com/spf13/cobra"
 )
@@ -16,19 +18,35 @@ var updateCmd = &cobra.Command{
 	Short: "Update brag data",
 	Long:  `This command will let you update content of a brag`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if os.Getenv("USER_ID") == "" {
+			fmt.Println("Please login to update brags")
+			return
+		}
 		bragId, _ := cmd.Flags().GetInt("id")
 		bragTitle, _ := cmd.Flags().GetString("title")
 		bragDetails, _ := cmd.Flags().GetString("details")
-
+		categoryName, _ := cmd.Flags().GetString("details")
+		var categoryId int
 		if bragId <= 0 {
 			fmt.Println("bragId not given")
 			return
-		} else if bragTitle == "" {
-			fmt.Println("brag title not given")
-			return
+		} else {
+			existingBragData, statusCode := helpers.GetABrag(bragId)
+			if statusCode != 200 {
+				fmt.Println(existingBragData.Data)
+				return
+			}
+			existingBrag := existingBragData.Data.(responses.Brag)
+			if bragTitle == "" {
+				bragTitle = existingBrag.Title
+			}
+			if categoryName == "" {
+				categoryName = existingBrag.CategoryName
+				categoryId = existingBrag.CategoryID
+			}
 		}
 
-		responseBody, statusCode := helpers.UpdateABrag(bragId, bragTitle, bragDetails)
+		responseBody, statusCode := helpers.UpdateABrag(bragId, bragTitle, bragDetails, categoryName, categoryId)
 		if statusCode == 201 {
 			fmt.Println(responseBody.Message)
 		} else {

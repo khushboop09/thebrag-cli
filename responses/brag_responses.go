@@ -1,35 +1,39 @@
 package responses
 
-import "time"
-
 type GetAllBragResponse struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
-	Data    []Brag `json:"data"`
+	Status  int
+	Message string
+	Data    []Brag
 }
 
 type GetABragResponse struct {
-	Status  int         `json:"status"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
+	Status  int
+	Message string
+	Data    interface{}
 }
 
 type Brag struct {
-	ID         int       `json:"id"`
-	Title      string    `json:"title"`
-	Details    string    `json:"details"`
-	Created_At time.Time `json:"created_at"`
-	Updated_At time.Time `json:"updated_at"`
+	ID           int
+	Title        string
+	Details      string
+	CategoryID   int
+	CategoryName string
 }
 
 type PostBragResponse struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
-	Data    string `json:"data"`
+	Status  int
+	Message string
+	Data    string
+}
+
+type PutBragResponse struct {
+	Status  int
+	Message string
+	Data    string
 }
 
 type DeleteBragResponse struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
-	Data    string `json:"data"`
+	Status  int
+	Message string
+	Data    string
 }

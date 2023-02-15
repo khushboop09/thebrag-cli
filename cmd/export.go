@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -15,6 +16,10 @@ var exportCmd = &cobra.Command{
 	Short: "Export your brags",
 	Long:  `Export and send your brags to the given email id. You can export the file as a csv or a pdf.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if os.Getenv("USER_ID") == "" {
+			fmt.Println("Please login to export your brags")
+			return
+		}
 		fmt.Println("export called")
 	},
 }

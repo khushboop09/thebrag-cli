@@ -13,7 +13,10 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "thebrag",
 	Short: "Quick management of your work log",
-	Long:  `Keep a log of any work that you might want to brag about directly from your terminal.`,
+	Long: `Keep a log of any work that you might want to brag about directly from your terminal.
+
+Login to get started!
+	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },

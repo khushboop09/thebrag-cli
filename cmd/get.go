@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"thebrag/helpers"
 	"thebrag/responses"
@@ -15,6 +16,10 @@ var getCmd = &cobra.Command{
 	Short: "get all your brags",
 	Long:  `the get command gets all your saved brags`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if os.Getenv("USER_ID") == "" {
+			fmt.Println("Please login to fetch your brags")
+			return
+		}
 		skip, _ := cmd.Flags().GetInt("skip")
 		limit, _ := cmd.Flags().GetInt("limit")
 		id, _ := cmd.Flags().GetInt("id")
@@ -37,7 +42,7 @@ var getCmd = &cobra.Command{
 			bragResponse, statusCode := helpers.GetABrag(id)
 			if statusCode == 200 {
 				var brag responses.Brag
-
+				// TODO: the below line is not working
 				brag, ok := bragResponse.Data.(responses.Brag)
 				if ok {
 					fmt.Printf("[%d] ", brag.ID)

@@ -7,6 +7,7 @@ import (
 	"thebrag/helpers"
 	"thebrag/responses"
 
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
 )
 
@@ -29,9 +30,10 @@ var getCmd = &cobra.Command{
 			if statusCode == 200 {
 				brags := bragResponse.Data
 				for i := 0; i < len(brags); i++ {
-					fmt.Printf("[%d]", brags[i].ID)
-					fmt.Println(brags[i].Title)
-					fmt.Println(brags[i].Details)
+					fmt.Printf("[%d] \n", brags[i].ID)
+					fmt.Printf("Title: %s \n", brags[i].Title)
+					fmt.Printf("Details: %s \n", brags[i].Details)
+					fmt.Printf("Category: %s \n", brags[i].CategoryName)
 					fmt.Println()
 				}
 			} else {
@@ -42,15 +44,11 @@ var getCmd = &cobra.Command{
 			bragResponse, statusCode := helpers.GetABrag(id)
 			if statusCode == 200 {
 				var brag responses.Brag
-				// TODO: the below line is not working
-				brag, ok := bragResponse.Data.(responses.Brag)
-				if ok {
-					fmt.Printf("[%d] ", brag.ID)
-					fmt.Println(brag.Title)
-					fmt.Println(brag.Details)
-				} else {
-					fmt.Println("error parsing response")
-				}
+				mapstructure.Decode(bragResponse.Data, &brag)
+				fmt.Printf("[%d] \n", brag.ID)
+				fmt.Printf("Title: %s \n", brag.Title)
+				fmt.Printf("Details: %s \n", brag.Details)
+				fmt.Printf("Category: %s \n", brag.CategoryName)
 			} else {
 				fmt.Println(bragResponse.Data)
 			}

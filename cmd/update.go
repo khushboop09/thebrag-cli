@@ -9,6 +9,7 @@ import (
 	"thebrag/helpers"
 	"thebrag/responses"
 
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +26,7 @@ var updateCmd = &cobra.Command{
 		bragId, _ := cmd.Flags().GetInt("id")
 		bragTitle, _ := cmd.Flags().GetString("title")
 		bragDetails, _ := cmd.Flags().GetString("details")
-		categoryName, _ := cmd.Flags().GetString("details")
+		categoryName, _ := cmd.Flags().GetString("category")
 		var categoryId int
 		if bragId <= 0 {
 			fmt.Println("bragId not given")
@@ -36,7 +37,9 @@ var updateCmd = &cobra.Command{
 				fmt.Println(existingBragData.Data)
 				return
 			}
-			existingBrag := existingBragData.Data.(responses.Brag)
+
+			var existingBrag responses.Brag
+			mapstructure.Decode(existingBragData.Data, &existingBrag)
 			if bragTitle == "" {
 				bragTitle = existingBrag.Title
 			}
@@ -62,4 +65,5 @@ func init() {
 	updateCmd.Flags().IntP("id", "i", 0, "ID of the brag you want to update")
 	updateCmd.Flags().StringP("title", "t", "", "updated title of the brag")
 	updateCmd.Flags().StringP("details", "d", "", "updated details of the brag")
+	updateCmd.Flags().StringP("category", "c", "", "updated category of the brag")
 }

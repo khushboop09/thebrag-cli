@@ -12,3 +12,9 @@ type UpdateBragRequest struct {
 	Details    string
 	CategoryID int
 }
+
+type ExportBragsRequest struct {
+	From       string
+	To         string
+	CategoryId int
+}

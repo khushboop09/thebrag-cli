@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"thebrag/helpers"
 
 	"github.com/spf13/cobra"
 )
@@ -14,13 +15,17 @@ import (
 var exportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export your brags",
-	Long:  `Export and send your brags to the given email id. You can export the file as a csv or a pdf.`,
+	Long:  `Exports your brags to a CSV file and send it to the registered email id.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if os.Getenv("USER_ID") == "" {
 			fmt.Println("Please login to export your brags")
 			return
 		}
-		fmt.Println("export called")
+		bragsCategory, _ := cmd.Flags().GetString("category")
+		bragDates, _ := cmd.Flags().GetStringSlice("date")
+
+		responseBody, _ := helpers.ExportBrags(bragDates[0], bragDates[1], bragsCategory)
+		fmt.Println(responseBody.Data)
 	},
 }
 
@@ -35,5 +40,6 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// exportCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	exportCmd.Flags().StringSliceP("date", "d", nil, "['from', 'to') date range for when the brags were created")
+	exportCmd.Flags().StringP("category", "c", "", "category name")
 }

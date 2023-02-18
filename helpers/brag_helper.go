@@ -126,3 +126,34 @@ func DeleteABrag(id int) responses.DeleteBragResponse {
 	json.Unmarshal(responseBody, &bragResponse)
 	return bragResponse
 }
+
+func ExportBrags(from string, to string, category string) (responses.PostBragResponse, int) {
+	categoryId := 0
+	if category != "" {
+		categoryId = GetCategoryId(category)
+	}
+
+	brags := requests.ExportBragsRequest{
+		From:       from,
+		To:         to,
+		CategoryId: categoryId,
+	}
+	json_data, err := json.Marshal(brags)
+	if err != nil {
+		log.Fatal(err)
+	}
+	api_url := fmt.Sprintf("%s/%s/brags/export", os.Getenv("API_HOST"), os.Getenv("USER_ID"))
+	response, err := http.Post(api_url, "application/json", bytes.NewBuffer(json_data))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer response.Body.Close()
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var res responses.PostBragResponse
+	json.Unmarshal(responseBody, &res)
+	return res, response.StatusCode
+}

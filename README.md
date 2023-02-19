@@ -10,6 +10,8 @@ go mod
 ```
 
 ## Run the project on local:
+- Rename the `.env.sample` file to `.env` and update the expected values.
+
 ```
 go run main.go
 ```

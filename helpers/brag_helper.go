@@ -89,7 +89,7 @@ func UpdateABrag(id int, title string, details string, categoryName string, cate
 	if err != nil {
 		log.Fatal(err)
 	}
-	api_url := fmt.Sprintf("%s/%s/brag", os.Getenv("API_HOST"), os.Getenv("USER_ID"))
+	api_url := fmt.Sprintf("%s/%s/brag/update", os.Getenv("API_HOST"), os.Getenv("USER_ID"))
 	response, err := http.Post(api_url, "application/json", bytes.NewBuffer(json_data))
 	if err != nil {
 		log.Fatal(err)

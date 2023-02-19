@@ -47,6 +47,9 @@ var updateCmd = &cobra.Command{
 				categoryName = existingBrag.CategoryName
 				categoryId = existingBrag.CategoryID
 			}
+			if bragDetails == "" {
+				bragDetails = existingBrag.Details
+			}
 		}
 
 		responseBody, statusCode := helpers.UpdateABrag(bragId, bragTitle, bragDetails, categoryName, categoryId)

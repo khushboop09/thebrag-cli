@@ -7,9 +7,31 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"thebrag/configs"
 	"thebrag/requests"
 	"thebrag/responses"
 )
+
+func StartLogin() {
+	name := ""
+	var email string
+	var password string
+	fmt.Println("Name: [Press enter if you don't want to share]")
+	fmt.Scanln(&name)
+	fmt.Println("Email: [Mandatory]")
+	fmt.Scanln(&email)
+	fmt.Println("Password: [Mandatory, peeping tom alert!]")
+	fmt.Scanln(&password)
+	response, statusCode := LoginUser(name, email, password)
+	if statusCode == 201 {
+		fmt.Println(response.Message)
+		// save to id to .data file
+		SaveUserIdToDataFile(response.Data, "add")
+		configs.LoadData()
+	} else {
+		fmt.Println(response.Data)
+	}
+}
 
 func LoginUser(name string, email string, password string) (responses.PostUserResponse, int) {
 	user := requests.CreateUserRequest{
